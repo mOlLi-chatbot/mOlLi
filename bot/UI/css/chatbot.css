@@ -1,0 +1,209 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #1e90ff, #6a5acd);
+  color: #fff;
+  direction: rtl; /* راست‌چین */
+}
+
+.chatBot-container {
+  border: 3px solid #00bcd4;
+  border-radius: 15px;
+  max-width: 600px;
+  margin: 20px auto;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(145deg, #1a1a28, #29293a);
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4), -5px -5px 15px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  position: relative;
+}
+
+.chat-header {
+  background: #00bcd4;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  font-size: 1.5rem;
+  position:relative;
+  direction: ltr;
+
+}
+
+.chat-header h1 {
+  margin: 0;
+  order: 2;
+  font-size: 1.8rem;
+  margin: 0 2px 0 2px ;
+  text-align: right; /* ترازبندی به سمت راست */
+}
+
+.sidebar-toggle {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 1.8rem;
+  cursor: pointer;
+  order: 1;
+  margin: 5px;
+  z-index: 5;
+  position: relative;
+}
+
+.sidebar-toggle:hover {
+  transform: rotate(90deg);
+  transition: 0.3s;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  background: #29293a;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);  	
+  z-index: 10;
+  animation: dropdownFade 0.3s ease-in-out;
+}
+
+.dropdown-item {
+  padding: 10px 15px;
+  color: #ffffff;
+  background: transparent;
+  text-align: c;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 1.2rem;
+}
+
+.dropdown-item:hover {
+  background: #00bcd4;
+}
+
+/* Keyframes for dropdown animation */
+@keyframes dropdownFade {
+  from {
+      opacity: 0;
+      transform: translateY(-10px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+.chatbox {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.chat {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.chat p {
+  padding: 10px 15px;
+  border-radius: 10px;
+  max-width: 70%;
+  background: #32324e;
+  color: #ffffff;
+  word-wrap: break-word;
+  font-size: 1.2rem;
+}
+
+.chat-incoming {
+  justify-content: flex-end; /* پیام‌ها از سمت چپ نمایش داده شوند */
+}
+
+.chat-incoming p {
+  background: #32324e; /* رنگ پیام دریافتی */
+  text-align: left; /* متن از چپ نوشته شود */
+  direction: ltr; /* جهت متن */
+}
+
+.chat-outgoing {
+  justify-content: flex-start;
+}
+
+.chat-outgoing p {
+  background: #29293a;
+  text-align: right;
+  direction: rtl;
+}
+
+.chat:hover .copy-btn {
+  display: inline-block;
+}
+
+.copy-btn {
+  display: none;
+  margin-right: 10px;
+  color: #00bcd4;
+  cursor: pointer;
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  background: #29293a;
+  border-top: 1px solid #32324e;
+  
+}
+
+textarea {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #00bcd4;
+  background: #1e1e2f;
+  color: #ffffff;
+  resize: none;
+  outline: none;
+  font-size: 1.2rem;
+}
+
+textarea:focus {
+  border-color: #00e0e6;
+  box-shadow: 0 0 5px #00e0e6;
+}
+
+#sendBTN {
+  background: #00bcd4;
+  border: none;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 1.2rem;
+}
+
+#sendBTN:hover {
+  background: #00e0e6;
+}
+
+@media (max-width: 768px) {
+  .chatBot-container {
+    width: 95%;
+    height: 90vh;
+  }
+}
