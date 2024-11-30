@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود به حساب کاربری</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/signin.css">
+</head>
+<body>
+    <div class="signin-container">
+        <h1>ورود به حساب کاربری</h1>
+        <form id="signinForm">
+            <div class="input-group">
+                <label for="emailOrPhone"><i class="fas fa-user"></i> ایمیل یا شماره تماس</label>
+                <input type="text" id="emailOrPhone" placeholder="ایمیل یا شماره تماس خود را وارد کنید" required>
+            </div>
+            <div class="input-group">
+                <label for="password"><i class="fas fa-lock"></i> رمز عبور</label>
+                <input type="password" id="password" placeholder="رمز عبور خود را وارد کنید" required>
+            </div>
+            <div class="options">
+                <label>
+                    <input type="checkbox" id="rememberMe"> مرا به خاطر بسپار
+                </label>
+                <a href="#" id="forgotPassword">فراموشی رمز عبور؟</a>
+            </div>
+            <button type="submit" id="signinBtn"><i class="fas fa-sign-in-alt"></i> ورود</button>
+        </form>
+    </div>
+    <script src="js/signin.js" defer></script>
+</body>
+</html>
