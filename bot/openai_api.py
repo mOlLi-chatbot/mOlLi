@@ -107,7 +107,7 @@ def main():
     load_environment()
     api_key = get_api_key()
     base_url = "https://api.avalai.ir/v1"
-    model = "gpt-3.5-turbo-0125"
+    model = "gpt-4o-mini"
     session_id = "unique_session_id_123"  # Replace with a dynamic session ID
 
     llm = initialize_chat_openai(model, base_url, api_key)
