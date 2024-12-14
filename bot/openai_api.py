@@ -37,7 +37,7 @@ def get_chat_history(session_id: str) -> list[dict]:
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     query = """
     SELECT user_message, ai_response, timestamp
-    FROM chat_history
+    FROM chat_chathistory
     WHERE session_id = %s
     ORDER BY timestamp ASC
     """
@@ -68,7 +68,8 @@ def get_ai_response_with_history(
     session_id: str,
     user_message: str,
     llm: ChatOpenAI,
-    parser: StrOutputParser
+    parser: StrOutputParser,
+    save_to_db=False
 ) -> str:
     """Get AI response while considering chat history."""
     # Retrieve history
@@ -88,7 +89,8 @@ def get_ai_response_with_history(
     response = chain.invoke(messages)
 
     # Save the new interaction
-    save_chat_to_db(session_id, user_message, response)
+    if save_to_db:
+        save_chat_to_db(session_id, user_message, response)
 
     return response
 
@@ -107,7 +109,7 @@ def main():
     load_environment()
     api_key = get_api_key()
     base_url = "https://api.avalai.ir/v1"
-    model = "gpt-3.5-turbo-0125"
+    model = "gpt-4o-mini"
     session_id = "unique_session_id_123"  # Replace with a dynamic session ID
 
     llm = initialize_chat_openai(model, base_url, api_key)

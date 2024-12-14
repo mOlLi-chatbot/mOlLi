@@ -11,16 +11,20 @@ class ChatUser(AbstractUser):
     created_time = models.DateTimeField(auto_now_add=True)
     deleted_time = models.DateTimeField(null=True, blank=True)
 
+    groups = models.ManyToManyField(
+        'auth.Group', related_name='chatuser_set',
+        blank=True,
+        help_text='The groups this user belongs to.',
+        verbose_name='groups' )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='chatuser_set',
+        blank=True,
+        help_text='Specific permissions for this user.',
+        verbose_name='user permissions' )
+
     def __str__(self):
         return self.username
-
-class ChatHistory(models.Model):
-    user = models.ForeignKey(ChatUser, on_delete=models.CASCADE)
-    text_msg = models.TextField()
-
-    def __str__(self):
-        return f"Chat by {self.user.username}"
-
 
 class UserTransaction(models.Model):
     user = models.ForeignKey(ChatUser, on_delete=models.CASCADE)

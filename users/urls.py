@@ -8,8 +8,5 @@ router.register(r'accounts', ChatUserViewSet, basename='chatuser')
 router.register(r'auth', AuthViewSet, basename='auth')
 
 urlpatterns = [
-    path('', include(router.urls)),
-
-    # path('signup/', views.signup, name='signup'),
-    # path('login/', views.login, name='login'),
+    path('', include(router.urls))
 ]

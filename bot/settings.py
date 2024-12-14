@@ -1,3 +1,8 @@
+import datetime
+from dotenv import load_dotenv
+import os
+
+
 """
 Django settings for SE project.
 
@@ -25,6 +30,9 @@ SECRET_KEY = 'django-insecure-nu%s5%pksuu0xl^b!90sqmv8b6w9fc58a9ho5vnr7j90pq=ne5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Load environment variables
+load_dotenv()
+
 ALLOWED_HOSTS = []
 
 
@@ -41,12 +49,19 @@ INSTALLED_APPS = [
 
 
     'users',
+    'chat',
 
 
     'rest_framework',
     'drf_yasg',
 
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'users.authenticators.JWTAuthenticator',
+    )
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -59,7 +74,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'SE.urls'
+ROOT_URLCONF = 'bot.urls'
 
 TEMPLATES = [
     {
@@ -77,7 +92,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'SE.wsgi.application'
+WSGI_APPLICATION = 'bot.wsgi.application'
 
 
 # Database
@@ -85,8 +100,12 @@ WSGI_APPLICATION = 'SE.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT')
     }
 }
 
@@ -131,3 +150,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.ChatUser'
+ACCESS_TOKEN_EXPIRE_TIME = datetime.timedelta(days = 0, hours=5, minutes=0)
+REFRESH_TOKEN_EXPIRE_TIME = datetime.timedelta(days = 2, hours=0, minutes=0)

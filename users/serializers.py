@@ -51,7 +51,7 @@ class LoginSerializer(serializers.Serializer):
         """
         username = data.get('username')
         password = data.get('password')
-
+        
         if username and password:
             user = authenticate(username=username, password=password)
             if user is None:
@@ -63,6 +63,8 @@ class LoginSerializer(serializers.Serializer):
 
         data['user'] = user
         return data
+    
+    
 class SignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatUser

@@ -9,6 +9,8 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import ChatUser
 from .serializers import ChatUserSerializer, LoginSerializer, SignupSerializer
+from .utils import *
+from django.conf import settings
 
 
 class AuthViewSet(viewsets.ViewSet):
@@ -50,8 +52,35 @@ class AuthViewSet(viewsets.ViewSet):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.validated_data['user']
-            return Response({"message": "Login successful", "username": user.username}, status=status.HTTP_200_OK)
+            access_token = generate_access_token(user)
+            refresh_token = generate_refresh_token(user)
+            return Response({"access_token": access_token, "refresh_token": refresh_token}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, methods=['post'], url_path='refresh_token')
+    def refresh_token(self, request):
+
+        refresh_token = request.data.get('refresh_token')
+        if refresh_token is None:
+            return Response({"message": "refresh token not found!"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            return Response({"message": "refresh token expired!"}, status=status.HTTP_400_BAD_REQUEST)
+        except jwt.DecodeError:
+            return Response({"message": "invalid token!"}, status=status.HTTP_400_BAD_REQUEST)
+        user = ChatUser.objects.filter(id=payload['user_id']).first()
+        if user is None:
+            return Response({"message": "user not found!"}, status=status.HTTP_400_BAD_REQUEST)
+        access_token = generate_access_token(user)
+        
+        return Response({"access_token" : access_token, "refresh_token": refresh_token})
+    
+    @action(detail=False, methods=['get'], url_path='get_user')
+    def get_user(self, request):
+        user = request.user
+        serialized_user = ChatUserSerializer(user)
+        return Response(serialized_user.data)
 
 
 class ChatUserViewSet(viewsets.ModelViewSet):
