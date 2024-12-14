@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets, status
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import *
 from .serializers import *
 from bot.openai_api import *
@@ -62,3 +62,32 @@ class AIChatViewSet(viewsets.ViewSet):
         return Response({"user": serialized_user, "chats": chats_serialized})
         
         
+    @action(detail=False, methods=['delete'], url_path='delete_chat_by_id', permission_classes=[IsAdminUser])
+    def delete_chat_by_id(self, request):
+
+        chat_id = request.data.get('chat_id')
+        
+        try:
+            chat = ChatHistory.objects.get(id=chat_id)
+        except:
+            return Response({"message": f"chat with id: {chat_id} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        chat.delete()
+        
+        return Response({"message": f"chat with id: {chat_id} deleted successfully"})
+
+
+    @action(detail=False, methods=['delete'], url_path='delete_user_chats', permission_classes=[IsAdminUser])
+    def delete_user_chats(self, request):
+
+        username = request.data.get('username')
+
+        try:
+            user = ChatUser.objects.get(username=username)
+        except:
+            return Response({"message": f"user with username: {username} does not exist"})
+        
+        chats = ChatHistory.objects.filter(user=user)
+        chats.delete()
+
+        return Response({"message": f"user: {username} chats deleted successfully"})
