@@ -1,4 +1,4 @@
-import { signup } from './api/_api.js';
+import { getUserChats, getAIResponse, deleteUserChats } from './api.js';
 
 const chatInput = document.querySelector('.chat-input textarea');
 const sendChatBtn = document.querySelector('#sendBTN');
@@ -7,7 +7,7 @@ const chatbox = document.querySelector(".chatbox");
 // تابع ایجاد پیام جدید
 const createChatItem = (message, className, lang = "en") => {
     const chatItem = document.createElement("li");
-    chatItem.classList.add(className , "chat");
+    chatItem.classList.add(className, "chat");
     chatItem.innerHTML = `
         <p lang="${lang}">${message}</p>
         <span class="copy-btn" onclick="copyMessage(this)"><i class="fas fa-copy"></i></span>`;
@@ -21,22 +21,26 @@ const detectLanguage = (text) => {
     return persianOrArabic.test(text) ? "fa" : "en";
 };
 
-// شبیه‌سازی پاسخ
-const simulateResponse = () => {
-    const responseMessage = "من اینجا هستم تا کمک کنم!";
-    const lang = detectLanguage(responseMessage);
-    setTimeout(() => {
-        const incomingChatItem = createChatItem(responseMessage, "chat-incoming", lang);
-        chatbox.appendChild(incomingChatItem);
-        chatbox.scrollTo(0, chatbox.scrollHeight);
-    }, 1000);
+// بارگذاری تاریخچه چت کاربر
+const loadUserChats = async () => {
+    const userChats = await getUserChats();
+    if (userChats && userChats.length > 0) {
+        userChats.forEach(chat => {
+            const lang = detectLanguage(chat.message);
+            const chatItem = createChatItem(chat.message, "chat-incoming", lang);
+            chatbox.appendChild(chatItem);
+        });
+    } else {
+        const initialMessage = createChatItem("سلام! چطور می‌توانم کمکتان کنم؟", "chat-incoming", "fa");
+        chatbox.appendChild(initialMessage);
+    }
+    chatbox.scrollTo(0, chatbox.scrollHeight);
 };
 
-// ارسال پیام
-const handleChat = () => {
+// ارسال پیام به سرور
+const handleChat = async () => {
     const userMessage = chatInput.value.trim();
 
-    // بررسی محدودیت کاراکتر
     if (userMessage.length > 5000) {
         alert("پیام شما بیش از 5000 کاراکتر است و ارسال نمی‌شود!");
         return;
@@ -50,7 +54,11 @@ const handleChat = () => {
     chatbox.scrollTo(0, chatbox.scrollHeight);
     chatInput.value = "";
 
-    simulateResponse();
+    // دریافت پاسخ از هوش مصنوعی
+    const aiResponse = await getAIResponse(userMessage);
+    const incomingChatItem = createChatItem(aiResponse, "chat-incoming", lang);
+    chatbox.appendChild(incomingChatItem);
+    chatbox.scrollTo(0, chatbox.scrollHeight);
 };
 
 // کپی پیام
@@ -60,10 +68,11 @@ const copyMessage = (button) => {
         .then(() => alert("پیام کپی شد!"))
         .catch((err) => alert("خطا در کپی کردن پیام!"));
 };
+/*
 document.querySelectorAll('.copy-btn').forEach(button => {
     button.addEventListener('click', () => copyMessage(button));
 });
-
+*/
 sendChatBtn.addEventListener("click", handleChat);
 chatInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
@@ -72,6 +81,25 @@ chatInput.addEventListener("keypress", (e) => {
     }
 });
 
+// پاک کردن چت
+const clearChat = async () => {
+    await deleteUserChats();
+    chatbox.innerHTML = '';
+    const initialMessage = createChatItem("سلام! چطور می‌توانم کمکتان کنم؟", "chat-incoming", "fa");
+    chatbox.appendChild(initialMessage);
+    alert("چت شما پاک شد!");
+};
+
+// اضافه کردن event listenerها
+sendChatBtn.addEventListener("click", handleChat);
+chatInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        handleChat();
+    }
+});
+
+// منوی کناری
 const sidebarToggle = document.getElementById('sidebarToggle');
 const dropdownContent = document.querySelector('.dropdown-content');
 
@@ -82,11 +110,7 @@ sidebarToggle.addEventListener('click', () => {
 
 // مخفی کردن dropdown زمانی که روی هر گزینه کلیک می‌شود
 const dropdownItem = document.getElementById('clearchat');
-dropdownItem.addEventListener('click', () => {
-    const chatbox = document.getElementById('chatBox');
-    chatbox.innerHTML = ''; // Clear all chat messages
-    alert('چت شما پاک شد!');
-});
+dropdownItem.addEventListener('click', clearChat);
 
 // مخفی کردن dropdown وقتی که کاربر در خارج از آن کلیک می‌کند
 document.addEventListener('click', (event) => {
@@ -96,9 +120,14 @@ document.addEventListener('click', (event) => {
 });
 
 document.getElementById('accountmanagement').addEventListener('click', () => {
-    window.location.href = 'AccountManagement.html'; // Replace with your actual URL
+    window.location.href = 'AccountManagement.html';
 });
 
 document.getElementById('payment').addEventListener('click', () => {
-    window.location.href = 'Payment.html'; // Replace with your actual URL
+    window.location.href = 'Payment.html';
 });
+
+document.getElementById('clearchat').addEventListener('click', clearChat);
+
+// بارگذاری تاریخچه چت در ابتدای صفحه
+loadUserChats();

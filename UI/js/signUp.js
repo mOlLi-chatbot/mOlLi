@@ -64,15 +64,15 @@ document.getElementById("signupForm").addEventListener("submit", async function 
         if (response.id) {
             alert("ثبت نام با موفقیت انجام شد!");
             console.log("Response:", response);
+            if (response.token)
+                localStorage.setItem("authToken", response.token); // ذخیره توکن
+            window.location.href = "ChatBot.html";
         } else {
-            alert("Signup failed: " + JSON.stringify(response));
+            errorMessage.textContent = "ثبت نام ناموفق: " + (response.message || "خطای ناشناخته");
         }
     } catch (error) {
         console.error("Error during signup:", error);
-        alert("An error occurred. Please try again.");
+        errorMessage.textContent = "خطا در ارتباط با سرور: " + error.message;
     }
-
-    // Redirect to chatbot page on successful validation
-    window.location.href = "chatbot.html";
     document.getElementById("signupForm").reset();
 });

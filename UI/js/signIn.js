@@ -1,19 +1,31 @@
-import { signup } from './api/_api.js';
+import { signin } from './api/_api.js';
 
-document.getElementById("signinForm").addEventListener("submit", function (e) {
+document.getElementById("signinForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const email = document.getElementById("email").value;
+    // گرفتن مقادیر فرم
+    const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    if (email && password) {
-        alert("ورود موفقیت‌آمیز بود!");
-        window.location.href = "ChatBot.html";
-    } else {
+    // اعتبارسنجی فرم
+    if (!username || !password) {
         alert("لطفاً تمامی فیلدها را پر کنید.");
+        return;
+    }
+
+    // ارسال درخواست به API
+    try {
+        const response = await signin(username, password);
+        alert("ورود موفقیت‌آمیز بود!");
+        console.log("Response data:", response);
+        if (response.token)
+        window.location.href = "ChatBot.html";
+    } catch (error) {
+        alert("ورود ناموفق: " + error.message);
     }
 });
 
+// مدیریت فراموشی رمز عبور
 document.getElementById("forgotPassword").addEventListener("click", function () {
     window.location.href = "ForgotPassword.html";
 });

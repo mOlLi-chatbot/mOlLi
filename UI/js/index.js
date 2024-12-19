@@ -1,4 +1,3 @@
-import { signup } from './api/_api.js';
 
 // Redirect buttons
 document.getElementById("signIn").addEventListener("click", function () {
