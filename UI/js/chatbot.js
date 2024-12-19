@@ -1,3 +1,5 @@
+import { signup } from './api/_api.js';
+
 const chatInput = document.querySelector('.chat-input textarea');
 const sendChatBtn = document.querySelector('#sendBTN');
 const chatbox = document.querySelector(".chatbox");
@@ -5,10 +7,11 @@ const chatbox = document.querySelector(".chatbox");
 // تابع ایجاد پیام جدید
 const createChatItem = (message, className, lang = "en") => {
     const chatItem = document.createElement("li");
-    chatItem.classList.add("chat", className);
+    chatItem.classList.add(className , "chat");
     chatItem.innerHTML = `
         <p lang="${lang}">${message}</p>
-        <span class="copy-btn" onclick="copyMessage(this)">📋</span>`;
+        <span class="copy-btn" onclick="copyMessage(this)"><i class="fas fa-copy"></i></span>`;
+    chatItem.querySelector('.copy-btn').addEventListener('click', () => copyMessage(chatItem.querySelector('.copy-btn')));
     return chatItem;
 };
 
@@ -57,6 +60,9 @@ const copyMessage = (button) => {
         .then(() => alert("پیام کپی شد!"))
         .catch((err) => alert("خطا در کپی کردن پیام!"));
 };
+document.querySelectorAll('.copy-btn').forEach(button => {
+    button.addEventListener('click', () => copyMessage(button));
+});
 
 sendChatBtn.addEventListener("click", handleChat);
 chatInput.addEventListener("keypress", (e) => {
@@ -75,13 +81,11 @@ sidebarToggle.addEventListener('click', () => {
 });
 
 // مخفی کردن dropdown زمانی که روی هر گزینه کلیک می‌شود
-const dropdownItems = document.querySelectorAll('.dropdown-item');
-dropdownItems.forEach(item => {
-    item.addEventListener('click', () => {
-        dropdownContent.style.display = 'none';
-        // در اینجا می‌توانید عملکرد هر گزینه را اضافه کنید
-        alert(`${item.textContent} clicked!`);
-    });
+const dropdownItem = document.getElementById('clearchat');
+dropdownItem.addEventListener('click', () => {
+    const chatbox = document.getElementById('chatBox');
+    chatbox.innerHTML = ''; // Clear all chat messages
+    alert('چت شما پاک شد!');
 });
 
 // مخفی کردن dropdown وقتی که کاربر در خارج از آن کلیک می‌کند
@@ -89,4 +93,12 @@ document.addEventListener('click', (event) => {
     if (!sidebarToggle.contains(event.target) && !dropdownContent.contains(event.target)) {
         dropdownContent.style.display = 'none';
     }
+});
+
+document.getElementById('accountmanagement').addEventListener('click', () => {
+    window.location.href = 'AccountManagement.html'; // Replace with your actual URL
+});
+
+document.getElementById('payment').addEventListener('click', () => {
+    window.location.href = 'Payment.html'; // Replace with your actual URL
 });

@@ -1,3 +1,5 @@
+import { signup } from './api/_api.js';
+
 document.getElementById('changePasswordForm').addEventListener('submit', function (e) {
     e.preventDefault();
 

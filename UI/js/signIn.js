@@ -1,10 +1,12 @@
+import { signup } from './api/_api.js';
+
 document.getElementById("signinForm").addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const emailOrPhone = document.getElementById("emailOrPhone").value;
+    const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
-    if (emailOrPhone && password) {
+    if (email && password) {
         alert("ورود موفقیت‌آمیز بود!");
         window.location.href = "ChatBot.html";
     } else {

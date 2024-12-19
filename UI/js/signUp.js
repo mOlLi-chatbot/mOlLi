@@ -1,8 +1,10 @@
-document.getElementById("signupForm").addEventListener("submit", function (event) {
+import { signup } from './api/_api.js';
+
+document.getElementById("signupForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    const phone = document.getElementById("phone").value.trim();
-    const birthDate = document.getElementById("birthDate").value.trim();
+    //const phone = document.getElementById("phone").value.trim();
+    const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
     const email = document.getElementById("email").value.trim();
@@ -12,7 +14,7 @@ document.getElementById("signupForm").addEventListener("submit", function (event
     errorMessage.textContent = ""; // Clear previous errors
 
     // Validating required fields
-    if (!phone || !birthDate || !password || !confirmPassword) {
+    if (!email || !username || !password || !confirmPassword) {
         errorMessage.textContent = "لطفاً تمامی فیلدهای ضروری را پر کنید.";
         return;
     }
@@ -42,7 +44,7 @@ document.getElementById("signupForm").addEventListener("submit", function (event
     }
 
     // Validating birthDate in Jalali format
-    const currentYearJalali = moment().jYear();
+    /*const currentYearJalali = moment().jYear();
     const enteredDate = moment(birthDate, "jYYYY/jMM/jDD", true);
     if (!enteredDate.isValid()) {
         errorMessage.textContent = "تاریخ تولد باید به فرمت شمسی (مثال: 1400/05/10) باشد.";
@@ -53,9 +55,24 @@ document.getElementById("signupForm").addEventListener("submit", function (event
         errorMessage.textContent = `تاریخ تولد باید بین سال 1300 تا ${currentYearJalali} باشد.`;
         return;
     }
+*/
+    //api
+    const data = { username, email, password };
+    try {
+        const response = await signup(data);
+
+        if (response.id) {
+            alert("ثبت نام با موفقیت انجام شد!");
+            console.log("Response:", response);
+        } else {
+            alert("Signup failed: " + JSON.stringify(response));
+        }
+    } catch (error) {
+        console.error("Error during signup:", error);
+        alert("An error occurred. Please try again.");
+    }
 
     // Redirect to chatbot page on successful validation
-    alert("ثبت نام با موفقیت انجام شد!");
     window.location.href = "chatbot.html";
     document.getElementById("signupForm").reset();
 });
