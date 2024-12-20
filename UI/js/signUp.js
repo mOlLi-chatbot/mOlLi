@@ -3,18 +3,18 @@ import { signup } from './api/_api.js';
 document.getElementById("signupForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    //const phone = document.getElementById("phone").value.trim();
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
     const email = document.getElementById("email").value.trim();
     const terms = document.getElementById("terms").checked;
     const errorMessage = document.getElementById("errorMessage");
+    const loadingElement = document.getElementById("loading");
 
     errorMessage.textContent = ""; // Clear previous errors
 
     // Validating required fields
-    if (!email || !username || !password || !confirmPassword) {
+    if (!email || !username || !password || !confirmPassword || !terms) {
         errorMessage.textContent = "لطفاً تمامی فیلدهای ضروری را پر کنید.";
         return;
     }
@@ -43,36 +43,32 @@ document.getElementById("signupForm").addEventListener("submit", async function 
         return;
     }
 
-    // Validating birthDate in Jalali format
-    /*const currentYearJalali = moment().jYear();
-    const enteredDate = moment(birthDate, "jYYYY/jMM/jDD", true);
-    if (!enteredDate.isValid()) {
-        errorMessage.textContent = "تاریخ تولد باید به فرمت شمسی (مثال: 1400/05/10) باشد.";
-        return;
-    }
-    const enteredYear = enteredDate.jYear();
-    if (enteredYear < 1300 || enteredYear > currentYearJalali) {
-        errorMessage.textContent = `تاریخ تولد باید بین سال 1300 تا ${currentYearJalali} باشد.`;
-        return;
-    }
-*/
-    //api
+    // نمایش لودینگ
+    loadingElement.style.display = 'block';
+
+    // ارسال داده‌ها به API
     const data = { username, email, password };
+
     try {
         const response = await signup(data);
 
-        if (response.id) {
+        if (response.token) {
             alert("ثبت نام با موفقیت انجام شد!");
-            console.log("Response:", response);
-            if (response.token)
-                localStorage.setItem("authToken", response.token); // ذخیره توکن
-            window.location.href = "ChatBot.html";
+            localStorage.setItem("authToken", response.token); // ذخیره توکن
+            window.location.href = "ChatBot.html"; // هدایت به صفحه چت
         } else {
             errorMessage.textContent = "ثبت نام ناموفق: " + (response.message || "خطای ناشناخته");
         }
     } catch (error) {
         console.error("Error during signup:", error);
         errorMessage.textContent = "خطا در ارتباط با سرور: " + error.message;
+    } finally {
+        // مخفی کردن لودینگ
+        loadingElement.style.display = 'none';
     }
-    document.getElementById("signupForm").reset();
+
+    // فرم فقط در صورتی ریست می‌شود که ثبت‌نام موفقیت‌آمیز باشد
+    if (errorMessage.textContent === "") {
+        document.getElementById("signupForm").reset();
+    }
 });

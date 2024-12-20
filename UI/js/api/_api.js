@@ -1,148 +1,83 @@
 const API_BASE_URL = "http://127.0.0.1:8000";
-const headers = {
-    "Authorization": "Bearer YOUR_TOKEN_HERE",
-    "Content-Type": "application/json"
-};
 
-// ثبت‌ نام
+// تابع برای دریافت هدرها (شامل Authorization با استفاده از توکن ذخیره‌شده)
+const getHeaders = () => ({
+    'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // دریافت توکن از localStorage و اضافه کردن به هدر
+    'Content-Type': 'application/json', // نوع محتوا به صورت JSON
+});
+
+// ثبت‌نام
 async function signup(data) {
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/users/auth/signup/`, {
-            method: "POST",
-            headers: headers,
-            body: JSON.stringify(data),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "خطای ناشناخته");
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Signup API error:", error);
-        throw error;
-    }
+    return await apiRequest(`${API_BASE_URL}/api/users/auth/signup/`, "POST", data); // ارسال درخواست POST برای ثبت‌نام
 }
 
-// ورود
+// ورود (لاگین)
 async function signin(username, password) {
-    const url = `${API_BASE_URL}/api/users/auth/login/`;
-
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: headers,
-            body: JSON.stringify({ username, password }),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "خطای ناشناخته");
-        }
-        localStorage.setItem("authToken", data.token);
-        return await response.json();
-    } catch (error) {
-        console.error("Login API error:", error);
-        throw error;
-    }
+    // ارسال درخواست POST برای ورود
+    const data = await apiRequest(`${API_BASE_URL}/api/users/auth/login/`, "POST", { username, password });
+    // ذخیره توکن دریافتی از سرور در localStorage
+    localStorage.setItem("authToken", data.token);
+    return data; // بازگشت اطلاعات دریافتی از سرور
 }
-
 
 // گرفتن اطلاعات یک کاربر خاص
-async function getUser(token) {
-    const response = await fetch(`${API_BASE_URL}/api/users/auth/get_user/`, {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-
-    if (!response.ok) {
-        throw new Error("خطا در دریافت اطلاعات کاربر");
-    }
-
-    return await response.json();
+async function getUser() {
+    // ارسال درخواست GET برای دریافت اطلاعات کاربر
+    return await apiRequest(`${API_BASE_URL}/api/users/auth/get_user/`, "GET");
 }
 
 // بروزرسانی وضعیت پریمیوم کاربر
 async function updatePremiumStatus(id, isPremium) {
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/users/users/${id}/update_premium_status/`, {
-            method: "PATCH",
-            headers: headers,
-            body: JSON.stringify({ is_premium: isPremium }),
-        });
-        if (!response.ok) {
-            throw new Error(`Failed to update premium status: ${response.statusText}`);
-        }
-        return await response.json(); // برمی‌گرداند اطلاعات بروزرسانی شده
-    } catch (error) {
-        console.error("Error updating premium status:", error);
-        throw error; // خطا را به تابع فراخوانی می‌فرستد
-    }
+    // ارسال درخواست PATCH برای بروزرسانی وضعیت پریمیوم کاربر
+    return await apiRequest(`${API_BASE_URL}/api/users/users/${id}/update_premium_status/`, "PATCH", { isPremium });
 }
 
 // حذف (غیرفعال کردن) کاربر
-async function deleteUser(id) {
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/users/users/${id}/`, {
-            method: "DELETE",
-            headers: headers,
-        });
-        if (!response.ok) {
-            throw new Error(`Failed to delete user: ${response.statusText}`);
-        }
-        return await response.json(); // برمی‌گرداند نتیجه حذف
-    } catch (error) {
-        console.error("Error deleting user:", error);
-        throw error; // خطا را به تابع فراخوانی می‌فرستد
-    }
+async function deleteUser() {
+    // ارسال درخواست DELETE برای حذف یا غیرفعال کردن کاربر
+    return await apiRequest(`${API_BASE_URL}/api/users/users/`, "DELETE");
 }
 
 // دریافت تاریخچه چت کاربر
-const getUserChats = async () => {
-    const date = new Date().toISOString();
-    const response = await fetch(`${API_BASE_URL}/api/users/get_user_chats/`, {
-        method: "GET",
-        headers: headers,
-        body: JSON.stringify({ date })
-    });
-
-    if (response.ok) {
-        const data = await response.json();
-        return data.chats || [];
-    }
-    return [];
-};
+async function getUserChats() {
+    const date = new Date().toISOString(); // دریافت تاریخ و زمان جاری به فرمت ISO
+    // ارسال درخواست GET برای دریافت تاریخچه چت‌های کاربر
+    return await apiRequest(`${API_BASE_URL}/api/users/get_user_chats/?date=${encodeURIComponent(date)}`, "GET");
+}
 
 // ارسال پیام به هوش مصنوعی و دریافت پاسخ
-const getAIResponse = async (userMessage) => {
-    const response = await fetch(`${API_BASE_URL}/api/chat/aichat/get_ai_response/`, {
-        method: "GET",
-        headers: headers,
-        body: JSON.stringify({ user_message: userMessage })
-    });
-
-    if (response.ok) {
-        const data = await response.json();
-        return data.response || "متاسفم، پاسخ مناسبی یافت نشد.";
+async function getAIResponse(userMessage) {
+    if (userMessage.length > 5000) {
+        // بررسی طول پیام، اگر بیشتر از 5000 کاراکتر باشد خطا می‌دهد
+        throw new Error("پیام شما بیش از حد طولانی است.");
     }
-    return "خطا در دریافت پاسخ از هوش مصنوعی.";
-};
+    // ارسال درخواست GET برای ارسال پیام به هوش مصنوعی و دریافت پاسخ
+    return await apiRequest(`${API_BASE_URL}/api/chat/aichat/get_ai_response/?user_message=${encodeURIComponent(userMessage)}`, "GET");
+}
 
 // پاک کردن تاریخچه چت کاربر
-const deleteUserChats = async () => {
-    const username = "amirjafari"; // باید به نام کاربری واقعی تغییر دهید
-    const response = await fetch(`${API_BASE_URL}/api/chat/aichat/delete_user_chats/`, {
-        method: "DELETE",
-        headers: headers,
-        body: JSON.stringify({ username })
-    });
+async function deleteUserChats() {
+    // ارسال درخواست DELETE برای پاک کردن تاریخچه چت‌های کاربر
+    return await apiRequest(`${API_BASE_URL}/api/chat/aichat/delete_user_chats/`, "DELETE");
+}
 
+// تابع عمومی برای ارسال درخواست به API
+async function apiRequest(url, method, body = null) {
+    const headers = getHeaders(); // دریافت هدرها
+    const options = { method, headers }; // تنظیمات درخواست با متد و هدرها
+    if (body) options.body = JSON.stringify(body); // اگر بدنه‌ای وجود داشت، آن را به فرمت JSON تبدیل می‌کنیم
+    
+    // ارسال درخواست با استفاده از fetch API
+    const response = await fetch(url, options);
     if (!response.ok) {
-        alert("خطا در پاک کردن تاریخچه چت.");
+        // در صورت بروز خطا در درخواست، خطا را لاگ کرده و خطای مناسب را پرتاب می‌کنیم
+        const errorData = await response.json();
+        console.error("API Request Error:", errorData);
+        throw new Error(errorData.message || "خطای ناشناخته");
     }
-};
+    // اگر درخواست موفق بود، داده‌های پاسخ را برمی‌گردانیم
+    return await response.json();
+}
 
+// صادرات توابع برای استفاده در دیگر فایل‌ها
 export { signup, signin, getUser, updatePremiumStatus, deleteUser, getUserChats, getAIResponse, deleteUserChats };

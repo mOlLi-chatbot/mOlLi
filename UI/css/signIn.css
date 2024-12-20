@@ -1,3 +1,4 @@
+/* استایل‌های پیش‌فرض */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -101,6 +102,39 @@ body {
 #signinBtn:hover {
     background: #1c86ee;
     transform: translateY(-2px);
+}
+
+/* استایل وضعیت لودینگ */
+.loading-container {
+    display: none; /* به صورت پیش‌فرض مخفی است */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* پس‌زمینه نیمه شفاف */
+    color: #fff;
+    font-size: 1.5rem;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* روی دیگر المان‌ها */
+    flex-direction: column;
+    font-family: 'Roboto', sans-serif;
+}
+
+.spinner {
+    border: 8px solid #f3f3f3; /* رنگ پس‌زمینه */
+    border-top: 8px solid #1e90ff; /* رنگ لبه متحرک */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {
