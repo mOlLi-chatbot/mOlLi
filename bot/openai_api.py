@@ -33,6 +33,8 @@ def save_chat_to_db(session_id: str, user_message: str, ai_response: str) -> Non
 
 def get_chat_history(session_id: str) -> list[dict]:
     """Retrieve chat history for a given session."""
+    if session_id is None:
+        return []
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     query = """
@@ -73,6 +75,7 @@ def get_ai_response_with_history(
 ) -> str:
     """Get AI response while considering chat history."""
     # Retrieve history
+    print('-'*50, session_id)
     history = get_chat_history(session_id)
 
     # Format history for the prompt
