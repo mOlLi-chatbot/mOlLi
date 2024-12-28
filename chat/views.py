@@ -30,7 +30,7 @@ class AIChatViewSet(viewsets.ViewSet):
     def get_ai_response(self, request):
 
         user = request.user
-        user_message = request.data.get('user_message')
+        user_message = request.query_params.get('user_message')
 
         response = get_ai_response_with_history(self.session_id, user_message, self.llm, self.parser)
         idx = response.find("AI:")
@@ -50,7 +50,7 @@ class AIChatViewSet(viewsets.ViewSet):
     def get_user_chats(self, request):
 
         user = request.user
-        date = request.data.get('date')
+        date = request.query_params.get('date')
         if date is None:
             date = str(timezone.now())
         date = parse_datetime(date)
@@ -65,7 +65,7 @@ class AIChatViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['delete'], url_path='delete_chat_by_id', permission_classes=[IsAdminUser])
     def delete_chat_by_id(self, request):
 
-        chat_id = request.data.get('chat_id')
+        chat_id = request.query_params.get('chat_id')
         
         try:
             chat = ChatHistory.objects.get(id=chat_id)
@@ -80,7 +80,7 @@ class AIChatViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['delete'], url_path='delete_user_chats', permission_classes=[IsAdminUser])
     def delete_user_chats(self, request):
 
-        username = request.data.get('username')
+        username = request.query_params.get('username')
 
         try:
             user = ChatUser.objects.get(username=username)
