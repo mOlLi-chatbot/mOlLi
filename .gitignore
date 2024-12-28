@@ -1,3 +1,47 @@
-.chatbot/
-.env
-**/__pycache__/
+# Python bytecode files
+*.pyc
+__pycache__/
+
+# Django-specific files
+*.log
+*.pot
+*.py[cod]
+*.sqlite3
+
+# Environment and virtual environment directories
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+env.bak/
+venv.bak/
+
+# PyCharm project files
+.idea/
+
+# VS Code settings
+.vscode/
+
+# Docker files
+*.env
+docker-compose.override.yml
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Static and media files
+staticfiles/
+media/
+
+# Local development settings
+local_settings.py
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Other
+*.swp
