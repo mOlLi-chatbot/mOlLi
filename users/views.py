@@ -8,9 +8,12 @@ from drf_yasg import openapi
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import ChatUser
-from .serializers import ChatUserSerializer, LoginSerializer, SignupSerializer
+from .serializers import *
 from .utils import *
-from django.conf import settings
+import bot.settings as settings
+from urllib.parse import unquote
+from .authenticators import validate_init_data
+import json
 
 
 class AuthViewSet(viewsets.ViewSet):
@@ -80,7 +83,97 @@ class AuthViewSet(viewsets.ViewSet):
     def get_user(self, request):
         user = request.user
         serialized_user = ChatUserSerializer(user)
-        return Response(serialized_user.data)
+        return Response({"user": serialized_user.data})
+    
+    @action(detail=False, methods=['get'], url_path='get_full_user')
+    def get_full_user(self, request):
+        user = request.user
+        serialized_user = ChatUserFullSerializer(user)
+        return Response({"user": serialized_user.data})
+    
+    @action(detail=False, methods=['post'], url_path='mini_app_signup')
+    def mini_app_signup(self, request):
+        
+        app_token = request.data.get('app_token')
+        if app_token is None:
+            return Response({"message": "the 'app_token' field is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not validate_init_data(app_token, settings.TELEGRAM_BOT_SECRET_TOKEN):
+            return Response({"message": "app token validation failed"}, status=status.HTTP_400_BAD_REQUEST)
+
+        app_token = unquote(app_token)
+        user_info = app_token.split('&')[0]
+        user_info = user_info.split('=')[1]
+        json_user = json.loads(user_info)
+        username = json_user['username']
+        first_name = json_user['first_name']
+        last_name = json_user['last_name']
+
+        if ChatUser.objects.filter(username=username).exists():
+            return Response({"message": f"user with username: {username} already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+        created_user = ChatUser.objects.create(username=username, first_name=first_name, last_name=last_name,
+                                                app_token=app_token)
+        password = ChatUser.objects.make_random_password(length=16)
+        created_user.set_password(password)
+        
+        created_user_serialized = ChatUserSerializer(created_user).data
+        return Response({"user": created_user_serialized})
+        
+        
+    @action(detail=False, methods=['post'], url_path='mini_app_update_user', permission_classes=[IsAuthenticated])
+    def mini_app_update_user(self, request):
+
+        app_token = request.data.get('app_token')
+        if app_token is None:
+            return Response({"message": "the 'app_token' field is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not validate_init_data(app_token, settings.TELEGRAM_BOT_SECRET_TOKEN):
+            return Response({"message": "app token validation failed"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        app_token = unquote(app_token)
+        user_info = app_token.split('&')[0]
+        user_info = user_info.split('=')[1]
+        json_user = json.loads(user_info)
+        username = json_user['username']
+        first_name = json_user['first_name']
+        last_name = json_user['last_name']
+
+        if not ChatUser.objects.filter(username=username).exists():
+            return Response({"message": f"user with username: {username} does not exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = ChatUser.objects.get(username=username)
+        user.first_name = first_name
+        user.last_name = last_name
+        user.app_token = app_token
+
+        user_serialized = ChatUserSerializer(user).data
+        return Response({"user": user_serialized})
+    
+    @action(detail=False, methods=['post'], url_path='mini_app_login')
+    def mini_app_login(self, request):
+
+        app_token = request.data.get('app_token')
+        if app_token is None:
+            return Response({"message": "the 'app_token' field is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not validate_init_data(app_token, settings.TELEGRAM_BOT_SECRET_TOKEN):
+            return Response({"message": "app token validation failed"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        app_token = unquote(app_token)
+        user_info = app_token.split('&')[0]
+        user_info = user_info.split('=')[1]
+        json_user = json.loads(user_info)
+        username = json_user['username']
+
+        if not ChatUser.objects.filter(username=username).exists():
+            return Response({"message": f"user with given username: {username} does not exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = ChatUser.objects.get(username=username)
+        access_token = generate_access_token(user)
+        refreh_token = generate_refresh_token(user)
+
+        return Response({"access_token": access_token, "refreh_token": refreh_token})
 
 
 class ChatUserViewSet(viewsets.ModelViewSet):

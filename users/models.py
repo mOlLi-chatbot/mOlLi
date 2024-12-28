@@ -10,6 +10,7 @@ class ChatUser(AbstractUser):
     is_deleted = models.BooleanField(default=False)
     created_time = models.DateTimeField(auto_now_add=True)
     deleted_time = models.DateTimeField(null=True, blank=True)
+    app_token = models.TextField(null=True)
 
     groups = models.ManyToManyField(
         'auth.Group', related_name='chatuser_set',
