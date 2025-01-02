@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحه تراکنش‌ها و اشتراک</title>
+    <link rel="stylesheet" href="css/payment.css">
+</head>
+<body>
+    <div class="container">
+        <h1>صفحه تراکنش‌ها و اشتراک</h1>
+        
+        <div id="subscriptionStatus" class="subscription-status">
+            ...در حال بارگذاری اطلاعات        
+        </div>
+        
+        <div class="subscription-options">
+            <div class="subscription-option" data-months="1">یک ماهه<br>200,000 تومان</div>
+            <div class="subscription-option" data-months="3">سه ماهه<br>500,000 تومان</div>
+            <div class="subscription-option" data-months="6">شش ماهه<br>900,000 تومان</div>
+            <div class="subscription-option" data-months="12">یک ساله<br>1,600,000 تومان</div>
+        </div>
+        
+        <table class="transaction-table" id="transactionTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th data-sort="date">تاریخ</th>
+                    <th data-sort="amount">مبلغ</th>
+                </tr>
+            </thead>
+            <tbody id="transactionList">
+                <!-- ردیف‌ها از طریق جاوااسکریپت اضافه می‌شوند -->
+            </tbody>
+        </table>
+        
+        <div class="pagination-controls">
+            <label for="rowsPerPage">تعداد نمایش:</label>
+            <select id="rowsPerPage">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+            <button id="prevPage">صفحه قبل</button>
+            <button id="nextPage">صفحه بعد</button>
+        </div>
+        
+        <button id="backToChatBot" class="back-button">بازگشت</button>
+    </div>
+
+    <script src="js/Payment.js" type="module"></script>
+</body>
+</html>
