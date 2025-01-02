@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-nu%s5%pksuu0xl^b!90sqmv8b6w9fc58a9ho5vnr7j90pq=ne5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -91,6 +91,7 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+AUTH_USER_MODEL = 'users.ChatUser'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
