@@ -84,12 +84,16 @@ class SignupSerializer(serializers.ModelSerializer):
         )
         return user
 
+class ChatUserFullSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatUser
+        fields = '__all__'
 
 class ChatUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatUser
         fields = [
-            'id', 'username', 'email', 'password', 'limit_count', 'is_premium', 
+            'id', 'username', 'first_name', 'last_name', 'email', 'password', 'limit_count', 'is_premium', 
             'is_deleted', 'created_time', 'deleted_time'
         ]
         extra_kwargs = {'password': {'write_only': True}}
