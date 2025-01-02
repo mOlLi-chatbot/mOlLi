@@ -1,0 +1,165 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    overflow-x: hidden;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.container:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    color: #1e90ff;
+}
+
+.subscription-status {
+    margin: 20px 0;
+    text-align: center;
+    font-size: 1.5rem;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 10px;
+    color: #333;
+}
+
+.subscription-options {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.subscription-option {
+    flex: 1;
+    margin: 0 5px;
+    padding: 10px;
+    text-align: center;
+    border: 2px solid #1e90ff;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.subscription-option:hover {
+    background: #1e90ff;
+    color: #fff;
+}
+
+.subscription-option.disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.transaction-table th, .transaction-table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.transaction-table th {
+    background: #1e90ff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.transaction-table th:hover {
+    background: #1c86ee;
+}
+
+.transaction-table tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+.transaction-table tr:nth-child(odd) {
+    background: #fff;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 10px;
+    margin-top: -10px;
+    border-radius: 0 0 10px 10px;
+}
+
+.pagination-controls label, .pagination-controls button {
+    color: #ffffff;
+    font-size: 1rem;
+}
+.pagination-controls select{
+    color: #000000;
+    font-size: 1rem;
+}
+.pagination-controls button {
+    background: #1e90ff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.pagination-controls button:hover {
+    background: #1c86ee;
+}
+
+.back-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background: #1e90ff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.back-button:hover {
+    background: #1c86ee;
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .subscription-option {
+        font-size: 1rem;
+        padding: 8px;
+    }
+}

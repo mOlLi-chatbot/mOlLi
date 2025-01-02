@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fa">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eitaa.AI - چت با هوش مصنوعی</title>
+    <link rel="stylesheet" href="css/chatbot.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="js/chatbot.js" type="module"></script>
+</head>
+
+<body>
+    <div class="chatBot-container">
+        <header class="chat-header">
+            <h1>Eitaa.AI</h1>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="dropdown">
+                <div class="dropdown-content" id="dropdownMenu">
+                    <button class="dropdown-item" id="accountmanagement"><i class="fas fa-cog"></i> تنظیمات حساب</button>
+                    <button class="dropdown-item" id="payment"><i class="fas fa-wallet"></i> مدیریت پرداخت‌ها</button>
+                    <button class="dropdown-item" id="clearchat"><i class="fas fa-trash"></i> پاک کردن چت</button>
+                </div>
+            </div>
+        </header>
+
+        <ul class="chatbox" id="chatBox"></ul>
+
+        <div class="chat-input">
+            <button id="sendBTN"><i class="fas fa-paper-plane"></i> ارسال</button>
+            <textarea id="userMessage" placeholder="پیام خود را تایپ کنید..."></textarea>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+

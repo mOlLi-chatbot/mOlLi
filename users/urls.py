@@ -10,8 +10,5 @@ router.register(r'chathistory', ChatHistoryViewSet, basename='chathistory')
 router.register(r'usertransactions', UserTransactionViewSet, basename='usertransaction')
 
 urlpatterns = [
-    path('', include(router.urls)),
-
-    # path('signup/', views.signup, name='signup'),
-    # path('login/', views.login, name='login'),
+    path('', include(router.urls))
 ]

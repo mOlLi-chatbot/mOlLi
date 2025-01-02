@@ -1,3 +1,8 @@
+import datetime
+from dotenv import load_dotenv
+import os
+
+
 """
 Django settings for SE project.
 
@@ -21,11 +26,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-nu%s5%pksuu0xl^b!90sqmv8b6w9fc58a9ho5vnr7j90pq=ne5'
+TELEGRAM_BOT_SECRET_TOKEN = os.getenv('TELEGRAM_BOT_SECRET_TOKEN')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# to run the project using docker set 'DEBUG' to False
 DEBUG = True
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = ['*']
+=======
+# Load environment variables
+load_dotenv()
+
+ALLOWED_HOSTS = ['127.0.0.1']
+>>>>>>> 7a119e28855e8e1612adc981381e972dffa3459d
 
 
 # Application definition
@@ -37,9 +51,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
 
 
     'users',
+    'chat',
 
 
     'rest_framework',
@@ -47,7 +63,14 @@ INSTALLED_APPS = [
 
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'users.authenticators.JWTAuthenticator',
+    )
+}
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -57,7 +80,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'SE.urls'
+ROOT_URLCONF = 'bot.urls'
 
 TEMPLATES = [
     {
@@ -75,7 +98,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'SE.wsgi.application'
+WSGI_APPLICATION = 'bot.wsgi.application'
 
 
 # Database
@@ -83,8 +106,13 @@ WSGI_APPLICATION = 'SE.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': int(DEBUG) * os.getenv('DB_HOST') + int(not DEBUG) * os.getenv('DB_SERVICE_NAME'),
+        # 'HOST': os.getenv('DB_SERVICE_NAME'),
+        'PORT': os.getenv('DB_PORT')
     }
 }
 
@@ -130,3 +158,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.ChatUser'
+ACCESS_TOKEN_EXPIRE_TIME = datetime.timedelta(days = 0, hours=5, minutes=0)
+REFRESH_TOKEN_EXPIRE_TIME = datetime.timedelta(days = 2, hours=0, minutes=0)
