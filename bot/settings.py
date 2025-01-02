@@ -26,14 +26,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-nu%s5%pksuu0xl^b!90sqmv8b6w9fc58a9ho5vnr7j90pq=ne5'
+TELEGRAM_BOT_SECRET_TOKEN = os.getenv('TELEGRAM_BOT_SECRET_TOKEN')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# to run the project using docker set 'DEBUG' to False
 DEBUG = True
 
 # Load environment variables
 load_dotenv()
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -104,7 +106,8 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
+        'HOST': int(DEBUG) * os.getenv('DB_HOST') + int(not DEBUG) * os.getenv('DB_SERVICE_NAME'),
+        # 'HOST': os.getenv('DB_SERVICE_NAME'),
         'PORT': os.getenv('DB_PORT')
     }
 }

@@ -5,13 +5,17 @@ from dotenv import load_dotenv
 from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
 from psycopg2.extras import RealDictCursor
+import bot.settings as settings
 
 
 def get_db_connection():
     """Establish and return a database connection."""
     load_dotenv()  # Load environment variables from .env file
+    host = os.getenv('DB_SERVICE_NAME')
+    if settings.DEBUG:
+        host = os.getenv('DB_HOST')
     return psycopg2.connect(
-        host=os.getenv("DB_HOST"),
+        host=host,
         database=os.getenv("DB_NAME"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
@@ -33,6 +37,8 @@ def save_chat_to_db(session_id: str, user_message: str, ai_response: str) -> Non
 
 def get_chat_history(session_id: str) -> list[dict]:
     """Retrieve chat history for a given session."""
+    if session_id is None:
+        return []
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     query = """
