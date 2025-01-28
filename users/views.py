@@ -7,6 +7,11 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+from .models import ChatUser,ChatHistory,UserTransaction
+from .serializers import ChatUserSerializer, LoginSerializer, SignupSerializer,ChatHistorySerializer,UserTransactionSerializer
 <<<<<<< HEAD
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
